@@ -1,4 +1,4 @@
-package org.example.task.cardealershop;
+package org.example.task.cardealershop.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
