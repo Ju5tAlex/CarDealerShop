@@ -1,13 +1,13 @@
 package org.example.task.cardealershop.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "manufacturer")
 public class Manufacturer {
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "name", length = 45, nullable = false)

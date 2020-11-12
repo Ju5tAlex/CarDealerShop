@@ -1,14 +1,15 @@
 package org.example.task.cardealershop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "part")
 public class Part {
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "name", length = 45, nullable = false, unique = true)
@@ -24,6 +25,7 @@ public class Part {
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturer;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "partList")
     private List<Car> carList;
 
