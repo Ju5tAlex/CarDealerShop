@@ -1,5 +1,7 @@
 package org.example.task.cardealershop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -7,7 +9,7 @@ import java.util.List;
 @Table(name = "car")
 public class Car {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "model_name", length = 45, unique = true)
@@ -22,6 +24,7 @@ public class Car {
     @Column(name = "colour", length = 45, nullable = false)
     private String colour;
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,
                             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
@@ -30,6 +33,7 @@ public class Car {
             inverseJoinColumns = @JoinColumn(name = "client_id"))
     private List<Client> clientList;
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
