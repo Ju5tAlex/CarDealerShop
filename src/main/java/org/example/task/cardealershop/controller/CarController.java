@@ -5,12 +5,15 @@ import org.example.task.cardealershop.entity.Client;
 import org.example.task.cardealershop.entity.Part;
 import org.example.task.cardealershop.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/cars")
+@RequestMapping(
+        value = "/cars",
+        produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 public class CarController {
 
     private CarService carService;
@@ -30,12 +33,12 @@ public class CarController {
         return carService.getCar(carId);
     }
 
-    @PostMapping()
+    @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public Car createCar(@RequestBody Car car) {
         return carService.createCar(car);
     }
 
-    @PutMapping("/{carId}")
+    @PutMapping(value = "/{carId}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public Car createCar(@RequestBody Car car, @PathVariable int carId) {
         return carService.updateCar(car, carId);
     }

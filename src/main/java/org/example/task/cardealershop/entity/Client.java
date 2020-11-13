@@ -29,6 +29,7 @@ public class Client {
     @JoinColumn(name = "manager_id")
     private Manager manager;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "clientList")
     private List<Car> carList;
 

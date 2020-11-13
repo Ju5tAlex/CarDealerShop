@@ -4,12 +4,15 @@ import org.example.task.cardealershop.entity.Manufacturer;
 import org.example.task.cardealershop.entity.Part;
 import org.example.task.cardealershop.service.PartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/parts")
+@RequestMapping(
+        value = "/parts",
+        produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 public class PartController {
 
     private PartService partService;
@@ -34,12 +37,12 @@ public class PartController {
         return partService.getPartsManufacturer(id);
     }
 
-    @PostMapping()
+    @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public Part createPart(@RequestBody Part part, @RequestParam("manufacturer_id") int manufacturerId) {
         return partService.createPart(part, manufacturerId);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public Part updatePart(@RequestBody Part part, @PathVariable int id, @RequestParam("manufacturer_id") int manufacturerId) {
         return partService.updatePart(part, id, manufacturerId);
     }

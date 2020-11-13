@@ -9,6 +9,7 @@ import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,8 +39,16 @@ public class CarServiceImpl implements CarService {
     @Override
     public Car createCar(Car car) {
         car.setId(0);
+        car.setClientList(getUpdatedClientList(car));
         return carRepository.save(car);
     }
+
+    private List<Client> getUpdatedClientList(Car car) {
+        List<Client> clients = new ArrayList<>();
+        car.getClientList().forEach((client -> clients.add(clientService.getClient(client.getId()))));
+        return clients;
+    }
+
 
     @Override
     public Car updateCar(Car updatedCar, int carId) {
@@ -50,6 +59,7 @@ public class CarServiceImpl implements CarService {
                     car.setEnginePower(updatedCar.getEnginePower());
                     car.setEnginePower(updatedCar.getEnginePower());
                     car.setColour(updatedCar.getColour());
+                    car.setClientList(getUpdatedClientList(updatedCar));
                     return carRepository.save(car);
                 })
                 .orElseThrow(() -> new EntityByIdNotFoundException("Car", carId));
