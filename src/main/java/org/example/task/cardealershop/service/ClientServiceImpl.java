@@ -33,27 +33,31 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client createClient(Client client) {
+    public Manager getClientsManager(int id) {
+        return getClient(id).getManager();
+    }
+
+    @Override
+    public Client createClient(Client client, int managerId) {
         client.setId(0);
-        client.setManager(getManager(client));
+        client.setManager(getManager(managerId));
         return clientRepository.save(client);
     }
 
-    private Manager getManager(Client client) {
-        int managerId = client.getManager().getId();
+    private Manager getManager(int managerId) {
         return managerRepository.findById(managerId)
                 .orElseThrow(() -> new EntityByIdNotFoundException("Manager", managerId));
     }
 
     @Override
-    public Client updateClient(Client updatedClient, int id) {
+    public Client updateClient(Client updatedClient, int id, int managerId) {
         return clientRepository.findById(id)
                 .map((client) -> {
                     client.setFirstName(updatedClient.getFirstName());
                     client.setLastName(updatedClient.getLastName());
                     client.setEmail(updatedClient.getEmail());
                     client.setPhoneNumber(updatedClient.getPhoneNumber());
-                    client.setManager(getManager(updatedClient));
+                    client.setManager(getManager(managerId));
                     return clientRepository.save(client);
                 })
                 .orElseThrow(() -> new EntityByIdNotFoundException("Client", id));

@@ -1,6 +1,7 @@
 package org.example.task.cardealershop.controller;
 
 import org.example.task.cardealershop.entity.Client;
+import org.example.task.cardealershop.entity.Manager;
 import org.example.task.cardealershop.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,14 +29,19 @@ public class ClientController {
         return clientService.getClient(id);
     }
 
+    @GetMapping("/{id}/manager")
+    public Manager getClientsManager(@PathVariable int id) {
+        return clientService.getClientsManager(id);
+    }
+
     @PostMapping()
-    public Client createClient(@RequestBody Client client) {
-        return clientService.createClient(client);
+    public Client createClient(@RequestBody Client client, @RequestParam("manager_id") int managerId) {
+        return clientService.createClient(client, managerId);
     }
 
     @PutMapping("/{id}")
-    public Client createClient(@RequestBody Client client, @PathVariable int id) {
-        return clientService.updateClient(client, id);
+    public Client updateClient(@RequestBody Client client, @PathVariable int id, @RequestParam("manager_id") int managerId) {
+        return clientService.updateClient(client, id, managerId);
     }
 
     @DeleteMapping("/{id}")

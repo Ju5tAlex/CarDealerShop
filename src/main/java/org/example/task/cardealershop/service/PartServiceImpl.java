@@ -8,7 +8,6 @@ import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -34,26 +33,30 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public Part createPart(Part part) {
+    public Manufacturer getPartsManufacturer(int id) {
+        return getPart(id).getManufacturer();
+    }
+
+    @Override
+    public Part createPart(Part part, int manufacturerId) {
         part.setId(0);
-        part.setManufacturer(getManufacturer(part));
+        part.setManufacturer(getManufacturer(manufacturerId));
         return partRepository.save(part);
     }
 
-    private Manufacturer getManufacturer(Part part) {
-        int manufacturerId = part.getManufacturer().getId();
+    private Manufacturer getManufacturer(int manufacturerId) {
         return manufacturerRepository.findById(manufacturerId)
                 .orElseThrow(() -> new EntityByIdNotFoundException("Manufacturer", manufacturerId));
     }
 
     @Override
-    public Part updatePart(Part updatedPart, int id) {
+    public Part updatePart(Part updatedPart, int id, int manufacturerId) {
         return partRepository.findById(id)
                 .map((part) -> {
                     part.setName(updatedPart.getName());
                     part.setDescription(updatedPart.getDescription());
                     part.setCode(updatedPart.getCode());
-                    part.setManufacturer(getManufacturer(updatedPart));
+                    part.setManufacturer(getManufacturer(manufacturerId));
                     return partRepository.save(part);
                 })
                 .orElseThrow(() -> new EntityByIdNotFoundException("Part", id));

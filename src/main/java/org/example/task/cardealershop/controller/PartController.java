@@ -1,8 +1,7 @@
 package org.example.task.cardealershop.controller;
 
-import org.example.task.cardealershop.entity.Car;
+import org.example.task.cardealershop.entity.Manufacturer;
 import org.example.task.cardealershop.entity.Part;
-import org.example.task.cardealershop.service.CarService;
 import org.example.task.cardealershop.service.PartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +29,19 @@ public class PartController {
         return partService.getPart(id);
     }
 
+    @GetMapping("/{id}/manufacturer")
+    public Manufacturer getPartsManufacturer(@PathVariable int id) {
+        return partService.getPartsManufacturer(id);
+    }
+
     @PostMapping()
-    public Part createPart(@RequestBody Part part) {
-        return partService.createPart(part);
+    public Part createPart(@RequestBody Part part, @RequestParam("manufacturer_id") int manufacturerId) {
+        return partService.createPart(part, manufacturerId);
     }
 
     @PutMapping("/{id}")
-    public Part createPart(@RequestBody Part part, @PathVariable int id) {
-        return partService.updatePart(part, id);
+    public Part updatePart(@RequestBody Part part, @PathVariable int id, @RequestParam("manufacturer_id") int manufacturerId) {
+        return partService.updatePart(part, id, manufacturerId);
     }
 
     @DeleteMapping("/{id}")

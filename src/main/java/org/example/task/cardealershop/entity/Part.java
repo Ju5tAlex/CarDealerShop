@@ -21,6 +21,7 @@ public class Part {
     @Column(name = "code", nullable = false, unique = true)
     private int code;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturer;
