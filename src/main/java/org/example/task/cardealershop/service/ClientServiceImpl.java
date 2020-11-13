@@ -1,10 +1,9 @@
 package org.example.task.cardealershop.service;
 
-import org.example.task.cardealershop.dao.ManagerRepository;
-import org.example.task.cardealershop.dao.ManagerRepository;
 import org.example.task.cardealershop.dao.ClientRepository;
-import org.example.task.cardealershop.entity.Manager;
+import org.example.task.cardealershop.dao.ManagerRepository;
 import org.example.task.cardealershop.entity.Client;
+import org.example.task.cardealershop.entity.Manager;
 import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

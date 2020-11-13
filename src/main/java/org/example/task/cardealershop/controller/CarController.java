@@ -1,6 +1,8 @@
 package org.example.task.cardealershop.controller;
 
 import org.example.task.cardealershop.entity.Car;
+import org.example.task.cardealershop.entity.Client;
+import org.example.task.cardealershop.entity.Part;
 import org.example.task.cardealershop.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +25,9 @@ public class CarController {
         return carService.getAllCars();
     }
 
-    @GetMapping("/{id}")
-    public Car getCar(@PathVariable int id) {
-        return carService.getCar(id);
+    @GetMapping("/{carId}")
+    public Car getCar(@PathVariable int carId) {
+        return carService.getCar(carId);
     }
 
     @PostMapping()
@@ -33,13 +35,44 @@ public class CarController {
         return carService.createCar(car);
     }
 
-    @PutMapping("/{id}")
-    public Car createCar(@RequestBody Car car, @PathVariable int id) {
-        return carService.updateCar(car, id);
+    @PutMapping("/{carId}")
+    public Car createCar(@RequestBody Car car, @PathVariable int carId) {
+        return carService.updateCar(car, carId);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCar(@PathVariable int id) {
-        carService.deleteCar(id);
+    @DeleteMapping("/{carId}")
+    public void deleteCar(@PathVariable int carId) {
+        carService.deleteCar(carId);
     }
+
+    @GetMapping("/{carId}/clients")
+    public List<Client> getClients(@PathVariable int carId) {
+        return carService.getClients(carId);
+    }
+
+    @PutMapping("/{carId}/clients/{clientId}")
+    public List<Client> addClientToCar(@PathVariable int carId, @PathVariable int clientId) {
+        return carService.addClient(carId, clientId);
+    }
+
+    @DeleteMapping("/{carId}/clients/{clientId}")
+    public List<Client> deleteClientFromCar(@PathVariable int carId, @PathVariable int clientId) {
+        return carService.deleteClient(carId, clientId);
+    }
+
+    @GetMapping("/{carId}/parts")
+    public List<Part> getParts(@PathVariable int carId) {
+        return carService.getParts(carId);
+    }
+
+    @PutMapping("/{carId}/parts/{partId}")
+    public List<Part> addPartToCar(@PathVariable int carId, @PathVariable int partId) {
+        return carService.addPart(carId, partId);
+    }
+
+    @DeleteMapping("/{carId}/parts/{partId}")
+    public List<Part> deletePartFromCar(@PathVariable int carId, @PathVariable int partId) {
+        return carService.deletePart(carId, partId);
+    }
+
 }
