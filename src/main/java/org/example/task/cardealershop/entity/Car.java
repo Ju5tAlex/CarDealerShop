@@ -24,7 +24,6 @@ public class Car {
     @Column(name = "colour", length = 45, nullable = false)
     private String colour;
 
-//    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,
                             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(

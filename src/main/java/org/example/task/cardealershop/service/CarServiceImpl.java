@@ -6,6 +6,8 @@ import org.example.task.cardealershop.entity.Client;
 import org.example.task.cardealershop.entity.Part;
 import org.example.task.cardealershop.exception.DuplicatedListEntityException;
 import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ public class CarServiceImpl implements CarService {
     private CarRepository carRepository;
     private ClientService clientService;
     private PartService partService;
+    private Logger logger = LoggerFactory.getLogger(CarServiceImpl.class);
 
     @Autowired
     public CarServiceImpl(CarRepository carRepository, ClientService clientService, PartService partService) {
@@ -28,16 +31,19 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<Car> getAllCars() {
+        logger.info("Getting list of all cars from database");
         return carRepository.findAll();
     }
 
     @Override
     public Car getCar(int carId) {
+        logger.info(String.format("Getting a car with id=%d from database", carId));
         return carRepository.findById(carId).orElseThrow(() -> new EntityByIdNotFoundException("Car", carId));
     }
 
     @Override
     public Car createCar(Car car) {
+        logger.info("Creating a new car");
         car.setId(0);
         car.setClientList(getUpdatedClientList(car));
         return carRepository.save(car);
@@ -52,6 +58,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Car updateCar(Car updatedCar, int carId) {
+        logger.info(String.format("Updating info for a car with id=%d", carId));
         return carRepository.findById(carId)
                 .map((car) -> {
                     car.setModelName(updatedCar.getModelName());
@@ -67,16 +74,20 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public void deleteCar(int carId) {
+        logger.info(String.format("Deleting a car with id=%d", carId));
+        if (!carRepository.existsById(carId)) throw new EntityByIdNotFoundException("Car", carId);
         carRepository.deleteById(carId);
     }
 
     @Override
     public List<Client> getClients(int carId) {
+        logger.info(String.format("Getting a list of clients for a car with id=%d", carId));
         return getCar(carId).getClientList();
     }
 
     @Override
     public List<Client> addClient(int carId, int clientId) {
+        logger.info(String.format("Adding client to a car with id=%d", carId));
         Car car = getCar(carId);
         List<Client> clientList = car.getClientList();
         Client client = clientService.getClient(clientId);
@@ -88,6 +99,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<Client> deleteClient(int carId, int clientId) {
+        logger.info(String.format("Removing client from a car with id=%d", carId));
         Car car = getCar(carId);
         List<Client> clientList = car.getClientList();
         Client client = clientService.getClient(clientId);
@@ -99,11 +111,13 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<Part> getParts(int carId) {
+        logger.info(String.format("Getting a list of parts for a car with id=%d", carId));
         return getCar(carId).getPartList();
     }
 
     @Override
     public List<Part> addPart(int carId, int partId) {
+        logger.info(String.format("Adding part to a car with id=%d", carId));
         Car car = getCar(carId);
         List<Part> partList = car.getPartList();
         Part part = partService.getPart(partId);
@@ -115,6 +129,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<Part> deletePart(int carId, int partId) {
+        logger.info(String.format("Removing part from a car with id=%d", carId));
         Car car = getCar(carId);
         List<Part> partList = car.getPartList();
         Part part = partService.getPart(partId);
