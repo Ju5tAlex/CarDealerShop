@@ -40,6 +40,14 @@ public class Part {
         this.manufacturer = manufacturer;
     }
 
+    public Part(int id, String name, String description, int code, Manufacturer manufacturer) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.code = code;
+        this.manufacturer = manufacturer;
+    }
+
     public int getId() {
         return id;
     }

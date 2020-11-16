@@ -1,7 +1,6 @@
 package org.example.task.cardealershop.entity;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "manufacturer")
@@ -26,6 +25,14 @@ public class Manufacturer {
     }
 
     public Manufacturer(String name, String country, String city, int index) {
+        this.name = name;
+        this.country = country;
+        this.city = city;
+        this.index = index;
+    }
+
+    public Manufacturer(int id, String name, String country, String city, int index) {
+        this.id = id;
         this.name = name;
         this.country = country;
         this.city = city;
