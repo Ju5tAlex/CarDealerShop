@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "part")
@@ -105,5 +106,23 @@ public class Part {
                 ", code=" + code +
                 ", manufacturer=" + manufacturer +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Part part = (Part) o;
+        return id == part.id &&
+                code == part.code &&
+                Objects.equals(name, part.name) &&
+                Objects.equals(description, part.description) &&
+                Objects.equals(manufacturer, part.manufacturer) &&
+                Objects.equals(carList, part.carList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, code, manufacturer, carList);
     }
 }
