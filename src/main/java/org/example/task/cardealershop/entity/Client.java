@@ -1,5 +1,7 @@
 package org.example.task.cardealershop.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,10 +24,12 @@ public class Client {
     @Column(name = "phone_number", length = 11, nullable = false, unique = true)
     private String phoneNumber;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private Manager manager;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "clientList")
     private List<Car> carList;
 

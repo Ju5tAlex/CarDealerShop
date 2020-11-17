@@ -21,6 +21,7 @@ public class Part {
     @Column(name = "code", nullable = false, unique = true)
     private int code;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturer;
@@ -33,6 +34,14 @@ public class Part {
     }
 
     public Part(String name, String description, int code, Manufacturer manufacturer) {
+        this.name = name;
+        this.description = description;
+        this.code = code;
+        this.manufacturer = manufacturer;
+    }
+
+    public Part(int id, String name, String description, int code, Manufacturer manufacturer) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.code = code;
