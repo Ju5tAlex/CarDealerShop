@@ -42,6 +42,21 @@ public class PartController {
         return partService.createPart(part, manufacturerId);
     }
 
+    @PostMapping("/mq/{id}")
+    public String sendPartToMQ(@PathVariable int id) {
+        return partService.sendPartToMQ(id);
+    }
+
+    @DeleteMapping("/mq/{id}")
+    public String sendPartToMQAndDelete(@PathVariable int id) {
+        return partService.sendPartToMQAndDelete(id);
+    }
+
+    @GetMapping("/mq")
+    public Part getPartFromMQ() {
+        return partService.getPartFromMQ();
+    }
+
     @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public Part updatePart(@RequestBody Part part, @PathVariable int id, @RequestParam("manufacturer_id") int manufacturerId) {
         return partService.updatePart(part, id, manufacturerId);

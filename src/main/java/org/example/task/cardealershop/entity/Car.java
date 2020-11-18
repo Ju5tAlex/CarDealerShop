@@ -1,9 +1,11 @@
 package org.example.task.cardealershop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "car")
@@ -24,22 +26,23 @@ public class Car {
     @Column(name = "colour", length = 45, nullable = false)
     private String colour;
 
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,
                             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "clients_cars",
             joinColumns = @JoinColumn(name = "car_id"),
             inverseJoinColumns = @JoinColumn(name = "client_id"))
-    private List<Client> clientList;
+    private Set<Client> clientList;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("carList")
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(
             name = "cars_parts",
             joinColumns = @JoinColumn(name = "car_id"),
             inverseJoinColumns = @JoinColumn(name = "part_id"))
-    private List<Part> partList;
+    private Set<Part> partList;
 
     public Car() {
     }
@@ -91,19 +94,19 @@ public class Car {
         this.colour = colour;
     }
 
-    public List<Client> getClientList() {
+    public Set<Client> getClientList() {
         return clientList;
     }
 
-    public void setClientList(List<Client> clientList) {
+    public void setClientList(Set<Client> clientList) {
         this.clientList = clientList;
     }
 
-    public List<Part> getPartList() {
+    public Set<Part> getPartList() {
         return partList;
     }
 
-    public void setPartList(List<Part> partList) {
+    public void setPartList(Set<Part> partList) {
         this.partList = partList;
     }
 
@@ -116,5 +119,22 @@ public class Car {
                 ", enginePower=" + enginePower +
                 ", colour='" + colour + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return id == car.id &&
+                price == car.price &&
+                enginePower == car.enginePower &&
+                Objects.equals(modelName, car.modelName) &&
+                Objects.equals(colour, car.colour);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, modelName, price, enginePower, colour);
     }
 }

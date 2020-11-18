@@ -3,7 +3,8 @@ package org.example.task.cardealershop.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "client")
@@ -31,7 +32,7 @@ public class Client {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "clientList")
-    private List<Car> carList;
+    private Set<Car> carList;
 
     public Client() {
     }
@@ -92,6 +93,14 @@ public class Client {
         this.manager = manager;
     }
 
+    public Set<Car> getCarList() {
+        return carList;
+    }
+
+    public void setCarList(Set<Car> carList) {
+        this.carList = carList;
+    }
+
     @Override
     public String toString() {
         return "Client{" +
@@ -102,5 +111,23 @@ public class Client {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", manager=" + manager +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return id == client.id &&
+                Objects.equals(firstName, client.firstName) &&
+                Objects.equals(lastName, client.lastName) &&
+                Objects.equals(email, client.email) &&
+                Objects.equals(phoneNumber, client.phoneNumber) &&
+                Objects.equals(manager, client.manager);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, phoneNumber, manager);
     }
 }
