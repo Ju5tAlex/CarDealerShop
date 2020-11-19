@@ -105,7 +105,7 @@ public class PartServiceImpl implements PartService {
     public Part getPartFromMQ() {
         Part part = (mqService.getPartFromMQ());
         Set<Car> cars = new HashSet<>();
-        part.getCarList().forEach(car -> cars.add(carService.getCar(car.getId())));
+        if (part.getCarList() != null) part.getCarList().forEach(car -> cars.add(carService.getCar(car.getId())));
         part.setCarList(cars);
         cars.forEach(car -> car.getPartList().add(part));
         return partRepository.save(part);
