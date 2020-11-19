@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(
@@ -19,16 +19,17 @@ import java.util.List;
 public class PartController {
 
     private PartService partService;
-    private ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper;
 
     @Autowired
-    public PartController(PartService partService) {
+    public PartController(PartService partService, ModelMapper modelMapper) {
         this.partService = partService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<PartDTO> getAllParts() {
-        return modelMapper.map(partService.getAllParts(), new TypeToken<List<PartDTO>>(){}.getType());
+    public Set<PartDTO> getAllParts() {
+        return modelMapper.map(partService.getAllParts(), new TypeToken<Set<PartDTO>>(){}.getType());
     }
 
     @GetMapping("/{id}")

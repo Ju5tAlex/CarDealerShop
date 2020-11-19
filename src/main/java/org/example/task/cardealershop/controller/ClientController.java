@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(
@@ -19,21 +19,27 @@ import java.util.List;
 public class ClientController {
 
     private ClientService clientService;
-    private ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, ModelMapper modelMapper) {
         this.clientService = clientService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<ClientDTO> getAllClients() {
-        return modelMapper.map(clientService.getAllClients(), new TypeToken<List<ClientDTO>>(){}.getType());
+    public Set<ClientDTO> getAllClients() {
+        return modelMapper.map(clientService.getAllClients(), new TypeToken<Set<ClientDTO>>(){}.getType());
     }
 
     @GetMapping("/{id}")
     public ClientDTO getClient(@PathVariable int id) {
         return modelMapper.map(clientService.getClient(id), ClientDTO.class);
+    }
+
+    @GetMapping("/{id}/entity")
+    public Client getClientEntity(@PathVariable int id) {
+        return clientService.getClient(id);
     }
 
     @GetMapping("/{id}/manager")

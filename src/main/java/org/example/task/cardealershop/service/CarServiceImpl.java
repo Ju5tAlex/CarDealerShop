@@ -52,7 +52,7 @@ public class CarServiceImpl implements CarService {
 
     private Set<Client> getUpdatedClientList(Car car) {
         Set<Client> clients = new HashSet<>();
-        car.getClientList().forEach((client -> clients.add(clientService.getClient(client.getId()))));
+        if (car.getClientList() != null) car.getClientList().forEach((client -> clients.add(clientService.getClient(client.getId()))));
         return clients;
     }
 
