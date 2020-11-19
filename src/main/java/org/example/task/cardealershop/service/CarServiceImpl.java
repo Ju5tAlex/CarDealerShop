@@ -47,6 +47,7 @@ public class CarServiceImpl implements CarService {
         logger.info("Creating a new car");
         car.setId(0);
         car.setClientList(getUpdatedClientList(car));
+        car.setPartList(getUpdatedPartList(car));
         return carRepository.save(car);
     }
 
@@ -54,6 +55,12 @@ public class CarServiceImpl implements CarService {
         Set<Client> clients = new HashSet<>();
         if (car.getClientList() != null) car.getClientList().forEach((client -> clients.add(clientService.getClient(client.getId()))));
         return clients;
+    }
+
+    private Set<Part> getUpdatedPartList(Car car) {
+        Set<Part> parts = new HashSet<>();
+        if (car.getPartList() != null) car.getPartList().forEach((part -> parts.add(partService.getPart(part.getId()))));
+        return parts;
     }
 
 
@@ -68,6 +75,7 @@ public class CarServiceImpl implements CarService {
                     car.setEnginePower(updatedCar.getEnginePower());
                     car.setColour(updatedCar.getColour());
                     car.setClientList(getUpdatedClientList(updatedCar));
+                    car.setPartList(getUpdatedPartList(updatedCar));
                     return carRepository.save(car);
                 })
                 .orElseThrow(() -> new EntityByIdNotFoundException("Car", carId));

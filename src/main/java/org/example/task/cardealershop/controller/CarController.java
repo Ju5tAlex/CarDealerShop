@@ -41,6 +41,11 @@ public class CarController {
         return modelMapper.map(carService.getCar(carId), CarDTO.class);
     }
 
+    @GetMapping("/{id}/entity")
+    public Car getCarEntity(@PathVariable int id) {
+        return carService.getCar(id);
+    }
+
     @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public CarDTO createCar(@RequestBody CarDTO carDTO) {
         Car car = modelMapper.map(carDTO, Car.class);
