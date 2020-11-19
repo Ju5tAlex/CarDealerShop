@@ -1,8 +1,11 @@
 package org.example.task.cardealershop.controller;
 
+import org.example.task.cardealershop.dto.PartDTO;
 import org.example.task.cardealershop.entity.Manufacturer;
 import org.example.task.cardealershop.entity.Part;
 import org.example.task.cardealershop.service.PartService;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,7 @@ import java.util.List;
 public class PartController {
 
     private PartService partService;
+    private ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
     public PartController(PartService partService) {
@@ -23,12 +27,17 @@ public class PartController {
     }
 
     @GetMapping
-    public List<Part> getAllParts() {
-        return partService.getAllParts();
+    public List<PartDTO> getAllParts() {
+        return modelMapper.map(partService.getAllParts(), new TypeToken<List<PartDTO>>(){}.getType());
     }
 
     @GetMapping("/{id}")
-    public Part getPart(@PathVariable int id) {
+    public PartDTO getPart(@PathVariable int id) {
+        return modelMapper.map(partService.getPart(id), PartDTO.class);
+    }
+
+    @GetMapping("/{id}/entity")
+    public Part getPartEntity(@PathVariable int id) {
         return partService.getPart(id);
     }
 
@@ -38,8 +47,20 @@ public class PartController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public Part createPart(@RequestBody Part part, @RequestParam("manufacturer_id") int manufacturerId) {
-        return partService.createPart(part, manufacturerId);
+    public PartDTO createPart(@RequestBody PartDTO partDTO) {
+        Part part = modelMapper.map(partDTO, Part.class);
+        return modelMapper.map(partService.createPart(part), PartDTO.class);
+    }
+
+    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public PartDTO updatePart(@RequestBody PartDTO partDTO, @PathVariable int id) {
+        Part part = modelMapper.map(partDTO, Part.class);
+        return modelMapper.map(partService.updatePart(part, id), PartDTO.class);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePart(@PathVariable int id) {
+        partService.deletePart(id);
     }
 
     @PostMapping("/mq/{id}")
@@ -55,15 +76,5 @@ public class PartController {
     @GetMapping("/mq")
     public Part getPartFromMQ() {
         return partService.getPartFromMQ();
-    }
-
-    @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public Part updatePart(@RequestBody Part part, @PathVariable int id, @RequestParam("manufacturer_id") int manufacturerId) {
-        return partService.updatePart(part, id, manufacturerId);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deletePart(@PathVariable int id) {
-        partService.deletePart(id);
     }
 }

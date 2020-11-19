@@ -53,7 +53,8 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public Part createPart(Part part, int manufacturerId) {
+    public Part createPart(Part part) {
+        int manufacturerId = part.getManufacturer().getId();
         logger.info(String.format("Creating a new part with manufacturer which id=%d", manufacturerId));
         part.setId(0);
         part.setManufacturer(getManufacturer(manufacturerId));
@@ -66,8 +67,9 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public Part updatePart(Part updatedPart, int id, int manufacturerId) {
+    public Part updatePart(Part updatedPart, int id) {
         logger.info(String.format("Updating info for a part with id=%d", id));
+        int manufacturerId = updatedPart.getManufacturer().getId();
         return partRepository.findById(id)
                 .map((part) -> {
                     part.setName(updatedPart.getName());
@@ -106,8 +108,6 @@ public class PartServiceImpl implements PartService {
         part.getCarList().forEach(car -> cars.add(carService.getCar(car.getId())));
         part.setCarList(cars);
         cars.forEach(car -> car.getPartList().add(part));
-        int partId = part.getId();
-        if (partRepository.existsById(partId)) return getPart(partId);
-        else return partRepository.save(part);
+        return partRepository.save(part);
     }
 }

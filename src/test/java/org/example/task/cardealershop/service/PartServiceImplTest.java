@@ -100,7 +100,7 @@ class PartServiceImplTest {
         int manufacturerId = manufacturer.getId();
         Mockito.when(partRepository.save(part)).thenReturn(part3);
         Mockito.when(manufacturerRepository.findById(manufacturerId)).thenReturn(Optional.of(manufacturer));
-        assertEquals(part3, partService.createPart(part, manufacturerId));
+        assertEquals(part3, partService.createPart(part));
     }
 
     @Test
@@ -110,7 +110,7 @@ class PartServiceImplTest {
         int manufacturerId = 333;
         Mockito.when(partRepository.save(part)).thenReturn(part3);
         Mockito.when(manufacturerRepository.findById(manufacturerId)).thenReturn(Optional.empty());
-        assertThrows(EntityByIdNotFoundException.class, () -> partService.createPart(part, manufacturerId));
+        assertThrows(EntityByIdNotFoundException.class, () -> partService.createPart(part));
     }
 
     @Test
@@ -122,7 +122,7 @@ class PartServiceImplTest {
         Mockito.when(partRepository.findById(id)).thenReturn(Optional.of(part2));
         Mockito.when(partRepository.save(part)).thenReturn(part);
         Mockito.when(manufacturerRepository.findById(manufacturerId)).thenReturn(Optional.of(manufacturer));
-        assertEquals(part, partService.updatePart(part1, id, manufacturerId));
+        assertEquals(part, partService.updatePart(part1, id));
     }
 
     @Test
@@ -134,7 +134,7 @@ class PartServiceImplTest {
         Mockito.when(partRepository.findById(id)).thenReturn(Optional.of(part2));
         Mockito.when(partRepository.save(part)).thenReturn(part);
         Mockito.when(manufacturerRepository.findById(manufacturerId)).thenReturn(Optional.empty());
-        assertThrows(EntityByIdNotFoundException.class, () -> partService.updatePart(part1, id, manufacturerId));
+        assertThrows(EntityByIdNotFoundException.class, () -> partService.updatePart(part1, id));
     }
 
     @Test
