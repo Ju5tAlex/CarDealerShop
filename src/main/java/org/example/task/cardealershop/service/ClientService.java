@@ -13,9 +13,9 @@ public interface ClientService {
 
     Manager getClientsManager(int id);
 
-    Client createClient(Client client, int managerId);
+    Client createClient(Client client);
 
-    Client updateClient(Client updatedClient, int id, int managerId);
+    Client updateClient(Client updatedClient, int id);
 
     void deleteClient(int id);
 }

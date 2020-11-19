@@ -1,6 +1,5 @@
 package org.example.task.cardealershop.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -26,7 +25,7 @@ public class Car {
     @Column(name = "colour", length = 45, nullable = false)
     private String colour;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("carList")
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST,
                             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinTable(

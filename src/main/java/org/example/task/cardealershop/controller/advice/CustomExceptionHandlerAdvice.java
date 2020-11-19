@@ -4,6 +4,7 @@ import org.example.task.cardealershop.exception.DuplicatedListEntityException;
 import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.example.task.cardealershop.exception.NoMessagesInQueueException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.hibernate.exception.DataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,9 +33,9 @@ public class CustomExceptionHandlerAdvice {
         return ex.getMessage();
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler(value = {ConstraintViolationException.class, DataException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String ConstraintViolationHandler(Exception ex) {
+    public String InputDataFormatViolationHandler(Exception ex) {
         Throwable cause = ex.getCause().getCause();
         logger.error(String.format("Exception %s occurred with message \"%s\"", cause.getClass().getName(), cause.getMessage()));
         return cause.getMessage();
