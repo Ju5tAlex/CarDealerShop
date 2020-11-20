@@ -4,7 +4,7 @@ import org.example.task.cardealershop.dao.CarRepository;
 import org.example.task.cardealershop.entity.Car;
 import org.example.task.cardealershop.entity.Client;
 import org.example.task.cardealershop.entity.Part;
-import org.example.task.cardealershop.exception.DuplicatedListEntityException;
+import org.example.task.cardealershop.exception.AlreadyHasEntityException;
 import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +100,7 @@ public class CarServiceImpl implements CarService {
         Car car = getCar(carId);
         Set<Client> clientList = car.getClientList();
         Client client = clientService.getClient(clientId);
-        if (clientList.contains(client)) throw new DuplicatedListEntityException("Client", clientId);
+        if (clientList.contains(client)) throw new AlreadyHasEntityException("Client", clientId, carId);
         else clientList.add(client);
         carRepository.save(car);
         return clientList;
@@ -130,7 +130,7 @@ public class CarServiceImpl implements CarService {
         Car car = getCar(carId);
         Set<Part> partList = car.getPartList();
         Part part = partService.getPart(partId);
-        if (partList.contains(part)) throw new DuplicatedListEntityException("Part", partId);
+        if (partList.contains(part)) throw new AlreadyHasEntityException("Part", partId, carId);
         else partList.add(part);
         carRepository.save(car);
         return partList;

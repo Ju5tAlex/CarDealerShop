@@ -1,6 +1,6 @@
 package org.example.task.cardealershop.controller.advice;
 
-import org.example.task.cardealershop.exception.DuplicatedListEntityException;
+import org.example.task.cardealershop.exception.AlreadyHasEntityException;
 import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.example.task.cardealershop.exception.NoMessagesInQueueException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class CustomExceptionHandlerAdvice {
     private Logger logger = LoggerFactory.getLogger(CustomExceptionHandlerAdvice.class);
 
-    @ExceptionHandler(value = {DuplicatedListEntityException.class, NoMessagesInQueueException.class})
+    @ExceptionHandler(value = {AlreadyHasEntityException.class, NoMessagesInQueueException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String badRequestHandler(Exception ex) {
         logger.error(String.format("Exception %s occurred with message \"%s\"", ex.getClass().getName(), ex.getMessage()));

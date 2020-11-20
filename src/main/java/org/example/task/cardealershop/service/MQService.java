@@ -10,4 +10,8 @@ public interface MQService {
     String sendPartToMQ(Part part);
 
     Part getPartFromMQ();
+
+    <T> String sendEntityToMQ(T entity);
+
+    <T> T getEntityFromMQ(Class<T> entityClass);
 }

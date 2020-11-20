@@ -90,12 +90,12 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public String sendPartToMQ(int id) {
-        return mqService.sendPartToMQ(getPart(id));
+        return mqService.sendEntityToMQ(getPart(id));
     }
 
     @Override
     public String sendPartToMQAndDelete(int id) {
-        String message = mqService.sendPartToMQ(getPart(id));
+        String message = mqService.sendEntityToMQ(getPart(id));
         deletePart(id);
         message += " and was deleted";
         return message;
@@ -103,7 +103,7 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public Part getPartFromMQ() {
-        Part part = (mqService.getPartFromMQ());
+        Part part = (mqService.getEntityFromMQ(Part.class));
         Set<Car> cars = new HashSet<>();
         if (part.getCarList() != null) part.getCarList().forEach(car -> cars.add(carService.getCar(car.getId())));
         part.setCarList(cars);

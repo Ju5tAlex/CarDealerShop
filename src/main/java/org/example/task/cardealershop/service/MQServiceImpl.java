@@ -73,4 +73,34 @@ public class MQServiceImpl implements MQService{
         }
         return part;
     }
+
+    @Override
+    public <T> String sendEntityToMQ(T entity) {
+        String message;
+        try {
+            amqpTemplate.convertAndSend(QUEUE_NAME, objectMapper.writeValueAsBytes(entity));
+            message = String.format("%s sent to MQ", entity.getClass().getSimpleName());
+            logger.info(message);
+        } catch (JsonProcessingException e) {
+            logger.error(String.format("Exception %s occurred with message \"%s\"", e.getClass().getName(), e.getMessage()));
+            throw new RuntimeException(e);
+        }
+        return message;
+    }
+
+    @Override
+    public <T> T getEntityFromMQ(Class<T> entityClass) {
+        T entity;
+        try {
+            Message message = amqpTemplate.receive(QUEUE_NAME);
+            if (message == null) throw new NoMessagesInQueueException(QUEUE_NAME);
+            entity = objectMapper.readValue(message.getBody(), entityClass);
+            String log = String.format("%s received from MQ", entityClass.getSimpleName());
+            logger.info(log);
+        } catch (IOException e) {
+            logger.error(String.format("Exception %s occurred with message \"%s\"", e.getClass().getName(), e.getMessage()));
+            throw new RuntimeException(e);
+        }
+        return entity;
+    }
 }
