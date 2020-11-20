@@ -44,6 +44,15 @@ public class Client {
         this.manager = manager;
     }
 
+    public Client(int id, String firstName, String lastName, String email, String phoneNumber, Manager manager) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.manager = manager;
+    }
+
     public int getId() {
         return id;
     }

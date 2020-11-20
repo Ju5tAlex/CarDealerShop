@@ -103,7 +103,7 @@ public class PartServiceImpl implements PartService {
 
     @Override
     public Part getPartFromMQ() {
-        Part part = (mqService.getEntityFromMQ(Part.class));
+        Part part = mqService.getEntityFromMQ(Part.class);
         Set<Car> cars = new HashSet<>();
         if (part.getCarList() != null) part.getCarList().forEach(car -> cars.add(carService.getCar(car.getId())));
         part.setCarList(cars);

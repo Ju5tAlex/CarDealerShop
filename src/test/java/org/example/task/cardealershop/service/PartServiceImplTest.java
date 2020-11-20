@@ -165,15 +165,15 @@ class PartServiceImplTest {
     @Test
     void sendPartToMQ_WithProperId_PartSent() {
         int id = part1.getId();
-        Mockito.when(mqService.sendPartToMQ(part1)).thenReturn(String.format("Part with id=%d sent to MQ", id));
+        Mockito.when(mqService.sendEntityToMQ(part1)).thenReturn(String.format("%s sent to MQ", part1.getClass().getSimpleName()));
         Mockito.when(partRepository.findById(id)).thenReturn(Optional.of(part1));
-        assertEquals(String.format("Part with id=%d sent to MQ", id), partService.sendPartToMQ(id));
+        assertEquals(String.format("%s sent to MQ", part1.getClass().getSimpleName()), partService.sendPartToMQ(id));
     }
 
     @Test
     void sendPartToMQ_WithWrongId_ExceptionThrown() {
         int id = 222;
-        Mockito.when(mqService.sendPartToMQ(part1)).thenReturn(String.format("Part with id=%d sent to MQ", id));
+        Mockito.when(mqService.sendEntityToMQ(part2)).thenReturn(String.format("%s sent to MQ", part1.getClass().getSimpleName()));
         Mockito.when(partRepository.findById(id)).thenReturn(Optional.empty());
         assertThrows(EntityByIdNotFoundException.class, () -> partService.sendPartToMQ(id));
     }
@@ -181,16 +181,16 @@ class PartServiceImplTest {
     @Test
     void sendPartToMQAndDelete_WithProperId_PartSentAndDeleted() {
         int id = part2.getId();
-        Mockito.when(mqService.sendPartToMQ(part2)).thenReturn(String.format("Part with id=%d sent to MQ", id));
+        Mockito.when(mqService.sendEntityToMQ(part2)).thenReturn(String.format("%s sent to MQ", part2.getClass().getSimpleName()));
         Mockito.when(partRepository.findById(id)).thenReturn(Optional.of(part2));
         Mockito.when(partRepository.existsById(id)).thenReturn(true);
-        assertEquals(String.format("Part with id=%d sent to MQ and was deleted", id), partService.sendPartToMQAndDelete(id));
+        assertEquals(String.format("%s sent to MQ and was deleted", part2.getClass().getSimpleName()), partService.sendPartToMQAndDelete(id));
     }
 
     @Test
     void sendPartToMQAndDelete_WithWrongId_ExceptionThrown() {
         int id = 455;
-        Mockito.when(mqService.sendPartToMQ(part2)).thenReturn(String.format("Part with id=%d sent to MQ", id));
+        Mockito.when(mqService.sendEntityToMQ(part2)).thenReturn(String.format("%s sent to MQ", part2.getClass().getSimpleName()));
         Mockito.when(partRepository.findById(id)).thenReturn(Optional.empty());
         Mockito.when(partRepository.existsById(id)).thenReturn(false);
         assertThrows(EntityByIdNotFoundException.class, () -> partService.sendPartToMQAndDelete(id));
@@ -198,13 +198,13 @@ class PartServiceImplTest {
 
     @Test
     void getPartFromMQ_WithProperId_PartSent() {
-        Mockito.when(mqService.getPartFromMQ()).thenReturn(part2);
+        Mockito.when(mqService.getEntityFromMQ(Part.class)).thenReturn(part2);
         Mockito.when(partRepository.save(part2)).thenReturn(part2);
         assertEquals(part2, partService.getPartFromMQ());
     }
     @Test
     void getPartFromMQ_WithDuplicatedPart_ExceptionThrown() {
-        Mockito.when(mqService.getPartFromMQ()).thenReturn(part2);
+        Mockito.when(mqService.getEntityFromMQ(Part.class)).thenReturn(part2);
         Mockito.when(partRepository.save(part2))
                 .thenThrow(new ConstraintViolationException("Duplicate entry 'hjkjkuuj' for key 'part.name_UNIQUE'",
                         new SQLException("SQL Error: 1062, SQLState: 23000"), "part.name_UNIQUE"));
