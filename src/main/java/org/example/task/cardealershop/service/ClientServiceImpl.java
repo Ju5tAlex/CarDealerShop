@@ -44,7 +44,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client createClient(Client client, int managerId) {
+    public Client createClient(Client client) {
+        int managerId = client.getManager().getId();
         logger.info(String.format("Creating a new client with manager which id=%d", managerId));
         client.setId(0);
         client.setManager(getManager(managerId));
@@ -57,7 +58,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client updateClient(Client updatedClient, int id, int managerId) {
+    public Client updateClient(Client updatedClient, int id) {
+        int managerId = updatedClient.getManager().getId();
         logger.info(String.format("Updating info for a client with id=%d", id));
         return clientRepository.findById(id)
                 .map((client) -> {

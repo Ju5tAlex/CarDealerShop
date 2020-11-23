@@ -1,13 +1,16 @@
 package org.example.task.cardealershop.controller;
 
+import org.example.task.cardealershop.dto.ClientDTO;
 import org.example.task.cardealershop.entity.Client;
 import org.example.task.cardealershop.entity.Manager;
 import org.example.task.cardealershop.service.ClientService;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(
@@ -16,19 +19,26 @@ import java.util.List;
 public class ClientController {
 
     private ClientService clientService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientService clientService, ModelMapper modelMapper) {
         this.clientService = clientService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
-    public List<Client> getAllClients() {
-        return clientService.getAllClients();
+    public Set<ClientDTO> getAllClients() {
+        return modelMapper.map(clientService.getAllClients(), new TypeToken<Set<ClientDTO>>(){}.getType());
     }
 
     @GetMapping("/{id}")
-    public Client getClient(@PathVariable int id) {
+    public ClientDTO getClient(@PathVariable int id) {
+        return modelMapper.map(clientService.getClient(id), ClientDTO.class);
+    }
+
+    @GetMapping("/{id}/entity")
+    public Client getClientEntity(@PathVariable int id) {
         return clientService.getClient(id);
     }
 
@@ -38,13 +48,15 @@ public class ClientController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public Client createClient(@RequestBody Client client, @RequestParam("manager_id") int managerId) {
-        return clientService.createClient(client, managerId);
+    public ClientDTO createClient(@RequestBody ClientDTO clientDTO) {
+        Client client = modelMapper.map(clientDTO, Client.class);
+        return modelMapper.map(clientService.createClient(client), ClientDTO.class);
     }
 
     @PutMapping(value = "/{id}", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
-    public Client updateClient(@RequestBody Client client, @PathVariable int id, @RequestParam("manager_id") int managerId) {
-        return clientService.updateClient(client, id, managerId);
+    public ClientDTO updateClient(@RequestBody ClientDTO clientDTO, @PathVariable int id) {
+        Client client = modelMapper.map(clientDTO, Client.class);
+        return modelMapper.map(clientService.updateClient(client, id), ClientDTO.class);
     }
 
     @DeleteMapping("/{id}")

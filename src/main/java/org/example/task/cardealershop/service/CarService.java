@@ -5,6 +5,7 @@ import org.example.task.cardealershop.entity.Client;
 import org.example.task.cardealershop.entity.Part;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CarService {
 
@@ -19,15 +20,15 @@ public interface CarService {
 
     void deleteCar(int id);
 
-    List<Client> getClients(int id);
+    Set<Client> getClients(int id);
 
-    List<Part> getParts(int carId);
+    Set<Part> getParts(int carId);
 
-    List<Client> addClient(int carId, int clientId);
+    Set<Client> addClient(int carId, int clientId);
 
-    List<Part> addPart(int carId, int partId);
+    Set<Part> addPart(int carId, int partId);
 
-    List<Client> deleteClient(int carId, int clientId);
+    Set<Client> deleteClient(int carId, int clientId);
 
-    List<Part> deletePart(int carId, int partId);
+    Set<Part> deletePart(int carId, int partId);
 }

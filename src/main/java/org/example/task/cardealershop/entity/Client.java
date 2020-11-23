@@ -1,9 +1,10 @@
 package org.example.task.cardealershop.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "client")
@@ -24,19 +25,27 @@ public class Client {
     @Column(name = "phone_number", length = 11, nullable = false, unique = true)
     private String phoneNumber;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private Manager manager;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("clientList")
     @ManyToMany(mappedBy = "clientList")
-    private List<Car> carList;
+    private Set<Car> carList;
 
     public Client() {
     }
 
     public Client(String firstName, String lastName, String email, String phoneNumber, Manager manager) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.manager = manager;
+    }
+
+    public Client(int id, String firstName, String lastName, String email, String phoneNumber, Manager manager) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -92,6 +101,14 @@ public class Client {
         this.manager = manager;
     }
 
+    public Set<Car> getCarList() {
+        return carList;
+    }
+
+    public void setCarList(Set<Car> carList) {
+        this.carList = carList;
+    }
+
     @Override
     public String toString() {
         return "Client{" +
@@ -102,5 +119,23 @@ public class Client {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", manager=" + manager +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return id == client.id &&
+                Objects.equals(firstName, client.firstName) &&
+                Objects.equals(lastName, client.lastName) &&
+                Objects.equals(email, client.email) &&
+                Objects.equals(phoneNumber, client.phoneNumber) &&
+                Objects.equals(manager, client.manager);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, phoneNumber, manager);
     }
 }

@@ -4,15 +4,16 @@ import org.example.task.cardealershop.dao.CarRepository;
 import org.example.task.cardealershop.entity.Car;
 import org.example.task.cardealershop.entity.Client;
 import org.example.task.cardealershop.entity.Part;
-import org.example.task.cardealershop.exception.DuplicatedListEntityException;
+import org.example.task.cardealershop.exception.AlreadyHasEntityException;
 import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CarServiceImpl implements CarService {
@@ -46,13 +47,20 @@ public class CarServiceImpl implements CarService {
         logger.info("Creating a new car");
         car.setId(0);
         car.setClientList(getUpdatedClientList(car));
+        car.setPartList(getUpdatedPartList(car));
         return carRepository.save(car);
     }
 
-    private List<Client> getUpdatedClientList(Car car) {
-        List<Client> clients = new ArrayList<>();
-        car.getClientList().forEach((client -> clients.add(clientService.getClient(client.getId()))));
+    private Set<Client> getUpdatedClientList(Car car) {
+        Set<Client> clients = new HashSet<>();
+        if (car.getClientList() != null) car.getClientList().forEach((client -> clients.add(clientService.getClient(client.getId()))));
         return clients;
+    }
+
+    private Set<Part> getUpdatedPartList(Car car) {
+        Set<Part> parts = new HashSet<>();
+        if (car.getPartList() != null) car.getPartList().forEach((part -> parts.add(partService.getPart(part.getId()))));
+        return parts;
     }
 
 
@@ -67,6 +75,7 @@ public class CarServiceImpl implements CarService {
                     car.setEnginePower(updatedCar.getEnginePower());
                     car.setColour(updatedCar.getColour());
                     car.setClientList(getUpdatedClientList(updatedCar));
+                    car.setPartList(getUpdatedPartList(updatedCar));
                     return carRepository.save(car);
                 })
                 .orElseThrow(() -> new EntityByIdNotFoundException("Car", carId));
@@ -80,28 +89,28 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<Client> getClients(int carId) {
+    public Set<Client> getClients(int carId) {
         logger.info(String.format("Getting a list of clients for a car with id=%d", carId));
         return getCar(carId).getClientList();
     }
 
     @Override
-    public List<Client> addClient(int carId, int clientId) {
+    public Set<Client> addClient(int carId, int clientId) {
         logger.info(String.format("Adding client to a car with id=%d", carId));
         Car car = getCar(carId);
-        List<Client> clientList = car.getClientList();
+        Set<Client> clientList = car.getClientList();
         Client client = clientService.getClient(clientId);
-        if (clientList.contains(client)) throw new DuplicatedListEntityException("Client", clientId);
+        if (clientList.contains(client)) throw new AlreadyHasEntityException("Client", clientId, carId);
         else clientList.add(client);
         carRepository.save(car);
         return clientList;
     }
 
     @Override
-    public List<Client> deleteClient(int carId, int clientId) {
+    public Set<Client> deleteClient(int carId, int clientId) {
         logger.info(String.format("Removing client from a car with id=%d", carId));
         Car car = getCar(carId);
-        List<Client> clientList = car.getClientList();
+        Set<Client> clientList = car.getClientList();
         Client client = clientService.getClient(clientId);
         if (!clientList.contains(client)) throw new EntityByIdNotFoundException("Client", clientId);
         else clientList.remove(client);
@@ -110,28 +119,28 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public List<Part> getParts(int carId) {
+    public Set<Part> getParts(int carId) {
         logger.info(String.format("Getting a list of parts for a car with id=%d", carId));
         return getCar(carId).getPartList();
     }
 
     @Override
-    public List<Part> addPart(int carId, int partId) {
+    public Set<Part> addPart(int carId, int partId) {
         logger.info(String.format("Adding part to a car with id=%d", carId));
         Car car = getCar(carId);
-        List<Part> partList = car.getPartList();
+        Set<Part> partList = car.getPartList();
         Part part = partService.getPart(partId);
-        if (partList.contains(part)) throw new DuplicatedListEntityException("Part", partId);
+        if (partList.contains(part)) throw new AlreadyHasEntityException("Part", partId, carId);
         else partList.add(part);
         carRepository.save(car);
         return partList;
     }
 
     @Override
-    public List<Part> deletePart(int carId, int partId) {
+    public Set<Part> deletePart(int carId, int partId) {
         logger.info(String.format("Removing part from a car with id=%d", carId));
         Car car = getCar(carId);
-        List<Part> partList = car.getPartList();
+        Set<Part> partList = car.getPartList();
         Part part = partService.getPart(partId);
         if (!partList.contains(part)) throw new EntityByIdNotFoundException("Part", partId);
         else partList.remove(part);

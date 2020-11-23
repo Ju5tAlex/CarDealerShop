@@ -13,9 +13,15 @@ public interface PartService {
 
     Manufacturer getPartsManufacturer(int id);
 
-    Part createPart(Part part, int manufacturerId);
+    Part createPart(Part part);
 
-    Part updatePart(Part updatedPart, int id, int manufacturerId);
+    Part updatePart(Part updatedPart, int id);
 
     void deletePart(int id);
+
+    String sendPartToMQ(int id);
+
+    String sendPartToMQAndDelete(int id);
+
+    Part getPartFromMQ();
 }

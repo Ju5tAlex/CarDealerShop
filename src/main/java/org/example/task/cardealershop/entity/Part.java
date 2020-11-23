@@ -1,9 +1,10 @@
 package org.example.task.cardealershop.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "part")
@@ -21,14 +22,14 @@ public class Part {
     @Column(name = "code", nullable = false, unique = true)
     private int code;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturer;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "partList")
-    private List<Car> carList;
+    @JsonIgnoreProperties("partList")
+    @ManyToMany(mappedBy = "partList", cascade = {CascadeType.MERGE, CascadeType.PERSIST,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    private Set<Car> carList;
 
     public Part() {
     }
@@ -88,11 +89,11 @@ public class Part {
         this.manufacturer = manufacturer;
     }
 
-    public List<Car> getCarList() {
+    public Set<Car> getCarList() {
         return carList;
     }
 
-    public void setCarList(List<Car> carList) {
+    public void setCarList(Set<Car> carList) {
         this.carList = carList;
     }
 
@@ -105,5 +106,22 @@ public class Part {
                 ", code=" + code +
                 ", manufacturer=" + manufacturer +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Part part = (Part) o;
+        return id == part.id &&
+                code == part.code &&
+                Objects.equals(name, part.name) &&
+                Objects.equals(description, part.description) &&
+                Objects.equals(manufacturer, part.manufacturer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, code, manufacturer);
     }
 }

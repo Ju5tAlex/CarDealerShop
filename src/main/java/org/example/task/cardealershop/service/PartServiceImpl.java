@@ -2,27 +2,36 @@ package org.example.task.cardealershop.service;
 
 import org.example.task.cardealershop.dao.ManufacturerRepository;
 import org.example.task.cardealershop.dao.PartRepository;
+import org.example.task.cardealershop.entity.Car;
 import org.example.task.cardealershop.entity.Manufacturer;
 import org.example.task.cardealershop.entity.Part;
 import org.example.task.cardealershop.exception.EntityByIdNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PartServiceImpl implements PartService {
 
     private PartRepository partRepository;
     private ManufacturerRepository manufacturerRepository;
+    private CarService carService;
+    private MQService mqService;
     private Logger logger = LoggerFactory.getLogger(PartServiceImpl.class);
 
     @Autowired
-    public PartServiceImpl(PartRepository partRepository, ManufacturerRepository manufacturerRepository) {
+    public PartServiceImpl(PartRepository partRepository, ManufacturerRepository manufacturerRepository,
+                           @Lazy CarService carService, MQService mqService) {
         this.partRepository = partRepository;
         this.manufacturerRepository = manufacturerRepository;
+        this.mqService = mqService;
+        this.carService = carService;
     }
 
     @Override
@@ -44,7 +53,8 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public Part createPart(Part part, int manufacturerId) {
+    public Part createPart(Part part) {
+        int manufacturerId = part.getManufacturer().getId();
         logger.info(String.format("Creating a new part with manufacturer which id=%d", manufacturerId));
         part.setId(0);
         part.setManufacturer(getManufacturer(manufacturerId));
@@ -57,8 +67,9 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public Part updatePart(Part updatedPart, int id, int manufacturerId) {
+    public Part updatePart(Part updatedPart, int id) {
         logger.info(String.format("Updating info for a part with id=%d", id));
+        int manufacturerId = updatedPart.getManufacturer().getId();
         return partRepository.findById(id)
                 .map((part) -> {
                     part.setName(updatedPart.getName());
@@ -75,5 +86,28 @@ public class PartServiceImpl implements PartService {
         logger.info(String.format("Deleting a part with id=%d", id));
         if (!partRepository.existsById(id)) throw new EntityByIdNotFoundException("Part", id);
         partRepository.deleteById(id);
+    }
+
+    @Override
+    public String sendPartToMQ(int id) {
+        return mqService.sendEntityToMQ(getPart(id));
+    }
+
+    @Override
+    public String sendPartToMQAndDelete(int id) {
+        String message = mqService.sendEntityToMQ(getPart(id));
+        deletePart(id);
+        message += " and was deleted";
+        return message;
+    }
+
+    @Override
+    public Part getPartFromMQ() {
+        Part part = mqService.getEntityFromMQ(Part.class);
+        Set<Car> cars = new HashSet<>();
+        if (part.getCarList() != null) part.getCarList().forEach(car -> cars.add(carService.getCar(car.getId())));
+        part.setCarList(cars);
+        cars.forEach(car -> car.getPartList().add(part));
+        return partRepository.save(part);
     }
 }
